@@ -1,19 +1,19 @@
+'use client';
 import * as React from 'react';
-import type { Metadata } from 'next';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import { Download as DownloadIcon } from '@phosphor-icons/react/dist/ssr/Download';
 import { Plus as PlusIcon } from '@phosphor-icons/react/dist/ssr/Plus';
-import { Upload as UploadIcon } from '@phosphor-icons/react/dist/ssr/Upload';
 import dayjs from 'dayjs';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import TextField from '@mui/material/TextField';
 
-import { config } from '@/config';
 import { CustomersFilters } from '@/components/dashboard/customer/customers-filters';
 import { CustomersTable } from '@/components/dashboard/customer/customers-table';
 import type { Customer } from '@/components/dashboard/customer/customers-table';
-
-export const metadata = { title: `Customers | Dashboard | ${config.site.name}` } satisfies Metadata;
 
 const customers = [
   {
@@ -70,7 +70,6 @@ const customers = [
     address: { city: 'Atlanta', country: 'USA', state: 'Georgia', street: '1865 Pleasant Hill Road' },
     createdAt: dayjs().subtract(2, 'hours').toDate(),
   },
-
   {
     id: 'USR-004',
     name: 'Penjani Inyene',
@@ -110,35 +109,51 @@ const customers = [
 ] satisfies Customer[];
 
 export default function Page(): React.JSX.Element {
-  const page = 0;
-  const rowsPerPage = 5;
+  const [open, setOpen] = React.useState(false);
 
-  const paginatedCustomers = applyPagination(customers, page, rowsPerPage);
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   return (
     <Stack spacing={3}>
       <Stack direction="row" spacing={3}>
         <Stack spacing={1} sx={{ flex: '1 1 auto' }}>
           <Typography variant="h4">Clientes</Typography>
-          
         </Stack>
         <div>
-          <Button startIcon={<PlusIcon fontSize="var(--icon-fontSize-md)" />} variant="contained">
+          <Button
+            startIcon={<PlusIcon fontSize="var(--icon-fontSize-md)" />}
+            variant="contained"
+            onClick={handleClickOpen}
+          >
             Agregar
           </Button>
         </div>
       </Stack>
       <CustomersFilters />
-      <CustomersTable
-        count={paginatedCustomers.length}
-        page={page}
-        rows={paginatedCustomers}
-        rowsPerPage={rowsPerPage}
-      />
+      <CustomersTable count={customers.length} page={0} rows={customers} rowsPerPage={5} />
+
+      {/* Modal para agregar cliente */}
+      <Dialog open={open} onClose={handleClose}>
+        <DialogTitle>Agregar Cliente</DialogTitle>
+        <DialogContent>
+          <TextField autoFocus margin="dense" label="Nombre" fullWidth />
+          <TextField margin="dense" label="Email" fullWidth />
+          <TextField margin="dense" label="Teléfono" fullWidth />
+          <TextField margin="dense" label="Dirección" fullWidth />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Cancelar</Button>
+          <Button onClick={handleClose} variant="contained">
+            Agregar
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Stack>
   );
-}
-
-function applyPagination(rows: Customer[], page: number, rowsPerPage: number): Customer[] {
-  return rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 }

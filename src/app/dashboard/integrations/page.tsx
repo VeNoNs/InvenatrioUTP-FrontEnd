@@ -1,20 +1,22 @@
+'use client'; // Directiva para que este componente funcione en el cliente
+
 import * as React from 'react';
-import type { Metadata } from 'next';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Unstable_Grid2';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import TextField from '@mui/material/TextField';
 import { Plus as PlusIcon } from '@phosphor-icons/react/dist/ssr/Plus';
 import dayjs from 'dayjs';
 
-import { config } from '@/config';
 import { ProductCard } from '@/components/dashboard/overview/product-card'; // Nuevo componente para productos
 import { ProductsFilters } from '@/components/dashboard/overview/products-filters'; // Filtros de productos (si es necesario)
-
-// Metadatos actualizados para la página de productos
-export const metadata = { title: `Productos en Stock | Dashboard | ${config.site.name}` } satisfies Metadata;
 
 // Datos de los productos con cantidad en stock y descripción
 const products = [
@@ -69,6 +71,17 @@ const products = [
 ];
 
 export default function Page(): React.JSX.Element {
+  const [open, setOpen] = React.useState(false);
+
+  // Manejar apertura/cierre del modal
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   return (
     <Stack spacing={3}>
       <Stack direction="row" spacing={3}>
@@ -76,7 +89,11 @@ export default function Page(): React.JSX.Element {
           <Typography variant="h4">Productos en Stock</Typography>
         </Stack>
         <div>
-          <Button startIcon={<PlusIcon fontSize="var(--icon-fontSize-md)" />} variant="contained">
+          <Button
+            startIcon={<PlusIcon fontSize="var(--icon-fontSize-md)" />}
+            variant="contained"
+            onClick={handleClickOpen} // Abrir el modal
+          >
             Agregar Producto
           </Button>
         </div>
@@ -98,6 +115,23 @@ export default function Page(): React.JSX.Element {
       <Box sx={{ display: 'flex', justifyContent: 'center' }}>
         <Pagination count={3} size="small" />
       </Box>
+
+      {/* Modal para agregar producto */}
+      <Dialog open={open} onClose={handleClose}>
+        <DialogTitle>Agregar Producto</DialogTitle>
+        <DialogContent>
+          <Stack spacing={2}>
+            <TextField label="Nombre del Producto" fullWidth />
+            <TextField label="Descripción" fullWidth />
+            <TextField label="Stock" type="number" fullWidth />
+            <TextField label="Fecha de Actualización" type="date" InputLabelProps={{ shrink: true }} fullWidth />
+          </Stack>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Cancelar</Button>
+          <Button variant="contained" onClick={handleClose}>Guardar</Button>
+        </DialogActions>
+      </Dialog>
     </Stack>
   );
 }
