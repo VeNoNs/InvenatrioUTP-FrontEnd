@@ -1,50 +1,34 @@
-import * as React from 'react';
-import Box from '@mui/material/Box';
-import Container from '@mui/material/Container';
-import GlobalStyles from '@mui/material/GlobalStyles';
+"use client";
 
-import { AuthGuard } from '@/components/auth/auth-guard';
-import { MainNav } from '@/components/dashboard/layout/main-nav';
-import { SideNav } from '@/components/dashboard/layout/side-nav';
+import Sidebar from '@/components/dashboard/Sidebar';
+import UserInfo from '@/components/dashboard/UserInfo'; // Componente del trabajador logueado
 
-interface LayoutProps {
+interface DashboardLayoutProps {
   children: React.ReactNode;
 }
 
-export default function Layout({ children }: LayoutProps): React.JSX.Element {
+export default function DashboardLayout({ children }: DashboardLayoutProps) {
+  const user = {
+    name: "Juan Pérez",
+    image: "/assets/avatarm.png", // Ruta de la imagen del trabajador
+  };
+
   return (
-    <AuthGuard>
-      <GlobalStyles
-        styles={{
-          body: {
-            '--MainNav-height': '56px',
-            '--MainNav-zIndex': 1000,
-            '--SideNav-width': '280px',
-            '--SideNav-zIndex': 1100,
-            '--MobileNav-width': '320px',
-            '--MobileNav-zIndex': 1100,
-          },
-        }}
-      />
-      <Box
-        sx={{
-          bgcolor: 'var(--mui-palette-background-default)',
-          display: 'flex',
-          flexDirection: 'column',
-          position: 'relative',
-          minHeight: '100%',
-        }}
-      >
-        <SideNav />
-        <Box sx={{ display: 'flex', flex: '1 1 auto', flexDirection: 'column', pl: { lg: 'var(--SideNav-width)' } }}>
-          <MainNav />
-          <main>
-            <Container maxWidth="xl" sx={{ py: '64px' }}>
-              {children}
-            </Container>
-          </main>
-        </Box>
-      </Box>
-    </AuthGuard>
+    <div className="flex">
+      {/* Sidebar fijo */}
+      <Sidebar />
+
+      {/* Contenido principal del Dashboard */}
+      <div className="flex-1 flex flex-col min-h-screen" style={{ paddingLeft: '16rem' }}> {/* Ajuste para que no se solape */}
+        <header className="bg-white shadow-md p-4 flex justify-between items-center">
+          <h1 className="text-xl font-bold">BARATO BARATO INVENTARIO</h1>
+          <UserInfo userName={user.name} userImage={user.image} />
+        </header>
+
+        <main className="flex-1 p-6 bg-gray-100">
+          {children}
+        </main>
+      </div>
+    </div>
   );
 }

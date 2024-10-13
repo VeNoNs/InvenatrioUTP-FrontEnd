@@ -1,27 +1,19 @@
-import * as React from 'react';
-import type { Viewport } from 'next';
+import '../styles/principals.css';
 
-import '@/styles/global.css';
-
-import { UserProvider } from '@/contexts/user-context';
-import { LocalizationProvider } from '@/components/core/localization-provider';
-import { ThemeProvider } from '@/components/core/theme-provider/theme-provider';
-
-export const viewport = { width: 'device-width', initialScale: 1 } satisfies Viewport;
+export const metadata = {
+  title: 'Tu Aplicación',
+  description: 'Descripción de tu aplicación',
+};
 
 interface LayoutProps {
   children: React.ReactNode;
 }
 
-export default function Layout({ children }: LayoutProps): React.JSX.Element {
+export default function RootLayout({ children }: LayoutProps) {
   return (
-    <html lang="en">
-      <body>
-        <LocalizationProvider>
-          <UserProvider>
-            <ThemeProvider>{children}</ThemeProvider>
-          </UserProvider>
-        </LocalizationProvider>
+    <html lang="es"> {/* Etiqueta <html> obligatoria */}
+      <body> {/* Etiqueta <body> obligatoria */}
+        {children} {/* Aquí se renderiza el contenido de cada página */}
       </body>
     </html>
   );
